@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void selectDrawerItem(MenuItem menuItem){
+
         // Create new fragment and specify the fragment to show based on nav item choosen
         Fragment fragment = null;
         Class fragmentClass;
@@ -82,7 +83,6 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case(R.id.nav_high_scores):
                 fragmentClass = HighScoresFragment.class;
-                Log.e("","Highscores hit");
                 break;
             case(R.id.nav_volume):
                 fragmentClass = VolumeFragment.class;
@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
         // Highlight the selected item has been done by NavigationView
         menuItem.setChecked(true);
         // Set action bar title
-        setTitle(menuItem.getTitle()); // REMOVE ??
+        setTitle(menuItem.getTitle());
         // close navigation drawer
         drawerLayout.closeDrawers();
     }
