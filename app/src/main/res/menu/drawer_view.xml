@@ -5,18 +5,26 @@
         <item
             android:id="@+id/nav_new_game"
             android:icon="@drawable/ic_border_color_black_24dp"
-            android:title="New Game"/>
+            android:title="New Game"
+            android:textColor="@color/black"
+            android:fontFamily="sans-serif"/>
         <item
             android:id="@+id/nav_end_game"
             android:icon="@drawable/ic_delete_black_24dp"
-            android:title="End Game"/>
+            android:title="End Game"
+            android:textColor="@color/black"
+            android:fontFamily="sans-serif"/>
         <item
             android:id="@+id/nav_high_scores"
             android:icon="@drawable/ic_grade_black_24dp"
-            android:title="High Scores"/>
+            android:title="High Scores"
+            android:textColor="@color/black"
+            android:fontFamily="sans-serif"/>
         <item
             android:id="@+id/nav_volume"
             android:icon="@drawable/ic_volume_up_black_24dp"
-            android:title="Volume"/>
+            android:title="Volume"
+            android:textColor="@color/black"
+            android:fontFamily="sans-serif"/>
     </group>
 </menu>
