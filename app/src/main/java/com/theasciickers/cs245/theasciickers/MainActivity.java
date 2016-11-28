@@ -9,6 +9,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.content.res.Configuration;
 
@@ -68,9 +69,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void selectDrawerItem(MenuItem menuItem){
+
         // Create new fragment and specify the fragment to show based on nav item choosen
         Fragment fragment = null;
-        Class fragmentClass = null;
+        Class fragmentClass;
 
         switch(menuItem.getItemId()){
             case (R.id.nav_new_game):
@@ -84,6 +86,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case(R.id.nav_volume):
                 fragmentClass = VolumeFragment.class;
+                break;
+            default:
+                fragmentClass = HighScoresFragment.class;
                 break;
         }
 
@@ -101,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
         // Highlight the selected item has been done by NavigationView
         menuItem.setChecked(true);
         // Set action bar title
-        setTitle(menuItem.getTitle()); // REMOVE ??
+        setTitle(menuItem.getTitle());
         // close navigation drawer
         drawerLayout.closeDrawers();
     }
@@ -112,12 +117,6 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-//        // open/close the drawer
-//        if(item.getItemId() == android.R.id.home){ // USE SWITCH ?? SEE TUTORIAL
-//            drawerLayout.openDrawer(GravityCompat.START);
-//            return true;
-//        }
-//        return super.onOptionsItemSelected(item);
     }
 
 }
