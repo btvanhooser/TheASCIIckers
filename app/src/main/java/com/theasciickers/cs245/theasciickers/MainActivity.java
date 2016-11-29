@@ -6,6 +6,7 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.SharedPreferencesCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.design.widget.NavigationView;
@@ -32,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         // Initialize application state
         if (savedInstanceState == null){
             // Start music
@@ -103,7 +103,8 @@ public class MainActivity extends AppCompatActivity {
                 setTitle("Concentration Game");
                 break;
             case(R.id.nav_end_game):
-                replaceFrag(GameFragment.class);
+                //GameFragment gF = (GameFragment) getSupportFragmentManager().findFragmentById(R.id.G);
+                //gF.showAnswers();
                 setTitle("Concentration Game");
                 break;
             case(R.id.nav_high_scores):

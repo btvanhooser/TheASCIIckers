@@ -39,7 +39,9 @@ public class GameFragment extends android.support.v4.app.Fragment{
     int numRows;
     int numCols;
     int clickCount;
-    Button [] lastCards = new Button[2];
+    boolean card0;
+    boolean card1;
+    CardButton [] lastCards = new CardButton[2];
     String [] cardStrings = {"'\\0'","null",";-D","//","cout<<","printf()","&nbsp;","t('o't)","NaN","TRUMP"};
     int pairsRemaining;
 
@@ -174,6 +176,87 @@ public class GameFragment extends android.support.v4.app.Fragment{
 
     }
 
+    /*public void showAnswers(){
+        GridLayout gl = (GridLayout) view.findViewById(R.id.gridLayoutTilePicker);
+        gl.removeAllViews();
+        gl.setRowCount(numRows);
+        gl.setColumnCount(numCols);
+        board = new CardButton[numRows][numCols];
+        for(int i = 0; i < numRows; i++){
+            for(int j = 0; j < numCols; j++){
+                board[i][j] = new CardButton(getActivity(), i, j);
+                board[i][j].setBackground(getResources().getDrawable(R.drawable.ascii_playing_card_front_blank));
+                board[i][j].setText(boardStrings[i][j]);
+                GridLayout.LayoutParams itemLayoutParams = new GridLayout.LayoutParams(GridLayout.spec(i), GridLayout.spec(j));
+                itemLayoutParams.width = 120;
+                itemLayoutParams.height = 165;
+                gl.addView(board[i][j],itemLayoutParams);
+            }
+        }
+    }*/
+
+    public void drawBoard(){
+        GridLayout gl = (GridLayout) view.findViewById(R.id.gridLayoutTilePicker);
+        gl.removeAllViews();
+        gl.setRowCount(numRows);
+        gl.setColumnCount(numCols);
+        board = new CardButton[numRows][numCols];
+        for(int i = 0; i < numRows; i++){
+            for(int j = 0; j < numCols; j++){
+                board[i][j] = new CardButton(getActivity(), i, j);
+                board[i][j].setBackground(getResources().getDrawable(R.drawable.ascii_playing_card_back));
+                final CardButton card = board[i][j];
+                System.out.println("card0: " + card0 + "card1: " + card1);
+                card.setOnClickListener(new View.OnClickListener(){
+                    public void onClick(View v){
+                        if ((getResources().getDrawable(R.drawable.ascii_playing_card_back).getConstantState()).equals(card.getBackground().getConstantState())) {
+                            clickCount++;
+                            if (clickCount == 1) {
+                                card.setBackground(getResources().getDrawable(R.drawable.ascii_playing_card_front_blank));
+                                card.setText(boardStrings[card.getRow()][card.getCol()]);
+                                lastCards[clickCount - 1] = card;
+                            } else if (clickCount == 2) {
+                                card.setBackground(getResources().getDrawable(R.drawable.ascii_playing_card_front_blank));
+                                card.setText(boardStrings[card.getRow()][card.getCol()]);
+                                lastCards[clickCount - 1] = card;
+                                if ((lastCards[0].getText()).equals(lastCards[1].getText())){
+                                    score += 2;
+                                    scoreText.setText(score + "");
+                                    clickCount = 0;
+                                    pairsRemaining--;
+                                    if (pairsRemaining == 0){
+                                        Log.d("Test","Game ends here");
+                                        //end the game
+                                        //call high score check -- I have this, I just need to add (Brian)
+                                    }
+                                }
+                                else {
+                                    tryAgain.setEnabled(true);
+                                    score = (score == 0) ? 0 : score - 1;
+                                    scoreText.setText(score + "");
+                                }
+                            }
+                        }
+                    }
+                });
+                GridLayout.LayoutParams itemLayoutParams = new GridLayout.LayoutParams(GridLayout.spec(i), GridLayout.spec(j));
+                itemLayoutParams.width = 120;
+                itemLayoutParams.height = 165;
+                gl.addView(board[i][j],itemLayoutParams);
+            }
+        }
+        if(card0){
+            board[lastCards[0].getRow()][lastCards[0].getCol()].setBackground(getResources().getDrawable(R.drawable.ascii_playing_card_front_blank));
+            board[lastCards[0].getRow()][lastCards[0].getCol()].setText(lastCards[0].getText());
+            System.out.println("in card 0");
+        }
+        if(card1){
+            board[lastCards[1].getRow()][lastCards[1].getCol()].setBackground(getResources().getDrawable(R.drawable.ascii_playing_card_front_blank));
+            board[lastCards[1].getRow()][lastCards[1].getCol()].setText(lastCards[1].getText());
+            System.out.println("in card 1");
+        }
+    }
+
     static void shuffleArray(String[] ar)
     {
         // If running on Java 6 or older, use `new Random()` on RHS here
@@ -185,6 +268,86 @@ public class GameFragment extends android.support.v4.app.Fragment{
             String a = ar[index];
             ar[index] = ar[i];
             ar[i] = a;
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(final Bundle outState){
+        super.onSaveInstanceState(outState);
+        TextView scoreText;
+
+        if(numRows > 0){
+            outState.putInt("score",score);
+            outState.putInt("numRows",numRows);
+            outState.putInt("numCols",numCols);
+            outState.putInt("numCardsChosen",numCardsChosen);
+            outState.putInt("clickCount",clickCount);
+            outState.putInt("pairsRemaining",pairsRemaining);
+            outState.putBoolean("tryAgainIsEnabled",tryAgain.isEnabled());
+            card0 = false;
+            card1 = false;
+            if(lastCards[0] != null){
+                outState.putString("lastCard0",lastCards[0].getText().toString());
+                outState.putInt("lastCard0Row",lastCards[0].getRow());
+                outState.putInt("lastCard0Col",lastCards[0].getCol());
+                card0 = true;
+                outState.putBoolean("card0",card0);
+            }
+            if(lastCards[1] != null){
+
+                outState.putString("lastCard1",lastCards[1].getText().toString());
+                outState.putInt("lastCard1Row",lastCards[1].getRow());
+                outState.putInt("lastCard1Col",lastCards[1].getCol());
+                card1 = true;
+                outState.putBoolean("card0",card1);
+            }
+
+            for(int i = 0 ; i < numRows;i++){
+                String [] tempBoardString = new String [numCols];
+                for(int j = 0; j < numCols;j++){
+                    tempBoardString[j] = boardStrings[i][j];
+                    System.out.println(boardStrings[i][j]);
+                }
+                outState.putStringArray("boardStringsR"+i,tempBoardString);
+            }
+        }
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState){
+        super.onActivityCreated(savedInstanceState);
+
+        if(savedInstanceState != null){
+            if(savedInstanceState.getBoolean("card0")){
+                CardButton c0 = new CardButton(getActivity(),savedInstanceState.getInt("lastCard0Row"),savedInstanceState.getInt("lastCard0Col"));
+                c0.setText(savedInstanceState.getString("lastCard0").toString());
+                lastCards[0] = c0;
+                card0 = true;
+            }
+            if(savedInstanceState.getBoolean("card1")){
+                CardButton c1 = new CardButton(getActivity(),savedInstanceState.getInt("lastCard1Row"),savedInstanceState.getInt("lastCard1Col"));
+                c1.setText(savedInstanceState.getString("lastCard1").toString());
+                lastCards[1] = c1;
+                card1 = true;
+            }
+            //mydata = savedInstanceState.getdata
+            score = savedInstanceState.getInt("score");
+            numRows = savedInstanceState.getInt("numRows");
+            numCols = savedInstanceState.getInt("numCols");
+            numCardsChosen = savedInstanceState.getInt("numCardsChosen");
+            tryAgain.setEnabled(savedInstanceState.getBoolean("tryAgainIsEnabled"));
+            clickCount = savedInstanceState.getInt("clickCount");
+            System.out.println("clickcount: " +clickCount);
+            System.out.println("numCardsChosen: " + numCardsChosen);
+            pairsRemaining = savedInstanceState.getInt("pairsRemaining");
+            for(int i = 0 ; i < numRows;i++){
+                boardStrings[i] = savedInstanceState.getStringArray("boardStringsR"+i);
+            }
+            if(numRows > 0){
+                drawBoard();
+                scoreText.setText(score + "");
+            }
+
         }
     }
 
