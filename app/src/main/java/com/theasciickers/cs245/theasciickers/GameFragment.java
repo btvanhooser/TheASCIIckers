@@ -26,9 +26,13 @@ public class GameFragment extends android.support.v4.app.Fragment{
 
     final Integer [] NUM_CARDS = {4,6,8,10,12,14,16,18,20};
     View view;
+    Button tryAgain;
+    Button [][] board;
     int numCardsChosen;
     int numRows;
     int numCols;
+    int clickCount;
+    Button [] lastCards = new Button[2];
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -37,6 +41,8 @@ public class GameFragment extends android.support.v4.app.Fragment{
         ListView list =(ListView) view.findViewById(R.id.listview);
         ArrayAdapter<Integer> adapter = new ArrayAdapter<Integer>(list.getContext(),android.R.layout.simple_list_item_activated_1,NUM_CARDS);
         list.setAdapter(adapter);
+
+        clickCount = 0;
 
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> listView, View itemView, int itemPosition, long itemId)
@@ -50,6 +56,19 @@ public class GameFragment extends android.support.v4.app.Fragment{
                 constructBoard();
             }
         });
+
+        tryAgain = (Button) view.findViewById(R.id.tryAgainButton);
+        tryAgain.setEnabled(false);
+        tryAgain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clickCount = 0;
+                tryAgain.setEnabled(false);
+                lastCards[0].setBackground(getResources().getDrawable(R.drawable.ascii_playing_card_back));
+                lastCards[1].setBackground(getResources().getDrawable(R.drawable.ascii_playing_card_back));
+            }
+        });
+
 
         return view;
     }
@@ -79,19 +98,34 @@ public class GameFragment extends android.support.v4.app.Fragment{
 
     public void constructBoard(){
         GridLayout gl = (GridLayout) view.findViewById(R.id.gridLayoutTilePicker);
+        board = new Button[numRows][numCols];
 
 
         gl.setRowCount(numRows);
         gl.setColumnCount(numCols);
         for(int i = 0; i < numRows; i++){
             for(int j = 0; j < numCols; j++){
-                Button card = new Button(getActivity());
-                card.setBackground(getResources().getDrawable(R.drawable.ascii_playing_card_back));
-
+                board[i][j] = new Button(getActivity());
+                board[i][j].setBackground(getResources().getDrawable(R.drawable.ascii_playing_card_back));
+                final Button card = board[i][j];
+                card.setOnClickListener(new View.OnClickListener(){
+                    public void onClick(View v){
+                        clickCount++;
+                        if(clickCount == 1 ) {
+                            card.setBackground(getResources().getDrawable(R.drawable.concentration_pic));
+                            lastCards[clickCount-1] = card;
+                        }
+                        else if (clickCount ==  2){
+                            card.setBackground(getResources().getDrawable(R.drawable.concentration_pic));
+                            lastCards[clickCount-1] = card;
+                            tryAgain.setEnabled(true);
+                        }
+                    }
+               });
                 GridLayout.LayoutParams itemLayoutParams = new GridLayout.LayoutParams(GridLayout.spec(i), GridLayout.spec(j));
                 itemLayoutParams.width = 150;
                 itemLayoutParams.height = 185;
-                gl.addView(card,itemLayoutParams);
+                gl.addView(board[i][j],itemLayoutParams);
             }
         }
 
