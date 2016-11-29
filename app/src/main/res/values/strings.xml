@@ -7,4 +7,15 @@
     <color name="white">#FFFFFF</color>
     <color name="darkBlue">#28219D</color>
     <color name="black">#000</color>
+    <string-array name="spinner_array">
+        <item>4</item>
+        <item>6</item>
+        <item>8</item>
+        <item>10</item>
+        <item>12</item>
+        <item>14</item>
+        <item>16</item>
+        <item>18</item>
+        <item>20</item>
+    </string-array>
 </resources>
