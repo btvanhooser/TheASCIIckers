@@ -25,6 +25,22 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // ---------------------set initial game fragment
+        Class fragmentClass = GameFragment.class;
+        Fragment fragment = null;
+
+        try{
+            fragment = (Fragment) fragmentClass.newInstance();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+
+        // Replace existing fragment
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.flContent,fragment).commit();
+        //---------------------------------------
+
         // Set toolbar to replace ActionBar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -68,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
+    //
     public void selectDrawerItem(MenuItem menuItem){
 
         // Create new fragment and specify the fragment to show based on nav item choosen
@@ -75,6 +92,9 @@ public class MainActivity extends AppCompatActivity {
         Class fragmentClass;
 
         switch(menuItem.getItemId()){
+            case (R.id.nav_resume_game):
+                fragmentClass = GameFragment.class;
+                break;
             case (R.id.nav_new_game):
                 fragmentClass = NewGameFragment.class;
                 break;
@@ -106,7 +126,10 @@ public class MainActivity extends AppCompatActivity {
         // Highlight the selected item has been done by NavigationView
         menuItem.setChecked(true);
         // Set action bar title
-        setTitle(menuItem.getTitle());
+        if(menuItem.getItemId() == R.id.nav_resume_game)
+            setTitle("Concentration Game");
+        else
+            setTitle(menuItem.getTitle());
         // close navigation drawer
         drawerLayout.closeDrawers();
     }
