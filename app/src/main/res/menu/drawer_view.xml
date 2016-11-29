@@ -29,7 +29,7 @@
         <item
             android:id="@+id/nav_volume"
             android:icon="@drawable/ic_volume_up_black_24dp"
-            android:title="Volume"
+            android:title="Music On"
             android:textColor="@color/black"
             android:fontFamily="sans-serif"/>
     </group>
