@@ -15,6 +15,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -82,37 +83,41 @@ public class HighScoresFragment extends android.support.v4.app.Fragment
 
         HashMap<Integer,ArrayList<String>> temp = new HashMap<>();
 
-        InputStream is = this.getResources().openRawResource(R.raw.highscores);
-        InputStreamReader isr = new InputStreamReader(is);
-        BufferedReader br = new BufferedReader(isr, 8192);
-        while (true){
-            String line = "";
-            try {
-                line = br.readLine();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            if (null == line){
+        try{
+            FileInputStream is = getActivity().openFileInput("highscore.txt");
+            InputStreamReader isr = new InputStreamReader(is);
+            BufferedReader br = new BufferedReader(isr, 8192);
+            while (true){
+                String line = "";
                 try {
-                    isr.close();
-                    is.close();
-                    br.close();
+                    line = br.readLine();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                break;
-            }
-            int tileNumber = Integer.parseInt(line);
-            temp.put(tileNumber,new ArrayList<String>());
-            for (int i = 0; i < 3; i++) {
-                try {
-                    temp.get(tileNumber).add(br.readLine());
-                } catch (IOException e) {
-                    e.printStackTrace();
+                if (null == line){
+                    try {
+                        isr.close();
+                        is.close();
+                        br.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                }
+                int tileNumber = Integer.parseInt(line);
+                temp.put(tileNumber,new ArrayList<String>());
+                for (int i = 0; i < 3; i++) {
+                    try {
+                        temp.get(tileNumber).add(br.readLine());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
+            highscores = temp;
+        } catch (Exception e){
+            e.printStackTrace();
         }
-        highscores = temp;
     }
 
     private void setUpSpinner() {

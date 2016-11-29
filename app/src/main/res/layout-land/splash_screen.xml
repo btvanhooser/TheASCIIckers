@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:background="#FFF" >
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/teamlogo"
+        android:scaleType="fitXY"
+        android:id="@+id/teamLogo"
+        android:layout_alignParentEnd="true" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/teamLogo"
+        android:layout_alignParentStart="true">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:srcCompat="@drawable/concentration_pic"
+            android:id="@+id/concentration_pic"/>
+
+        <TextView
+            android:id="@+id/text_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/THE_CONCENTRATION_GAME"
+            android:textColor="@android:color/black"
+            android:textColorHighlight="@android:color/white"
+            android:textSize="28sp"
+            android:layout_marginBottom="26dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true" />
+    </RelativeLayout>
+
+</RelativeLayout>

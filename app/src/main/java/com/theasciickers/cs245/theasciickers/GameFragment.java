@@ -1,5 +1,7 @@
 package com.theasciickers.cs245.theasciickers;
 
+import android.app.Dialog;
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,9 +10,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.ListView;
 import android.widget.Button;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -155,7 +165,8 @@ public class GameFragment extends android.support.v4.app.Fragment{
                                     if (pairsRemaining == 0){
                                         Log.d("Test","Game ends here");
                                         //end the game
-                                        //call high score check -- I have this, I just need to add (Brian)
+                                        askForName();
+
                                     }
                                 }
                                 else {
@@ -172,6 +183,147 @@ public class GameFragment extends android.support.v4.app.Fragment{
                 itemLayoutParams.height = 165;
                 gl.addView(board[i][j],itemLayoutParams);
             }
+        }
+
+    }
+
+    private void askForName() {
+        final Dialog dialog = new Dialog(getActivity());
+        dialog.setContentView(R.layout.high_score_entry);
+        dialog.setTitle("High Score Reached");
+        Button enterButton = (Button) dialog.findViewById(R.id.enterButton);
+        enterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EditText editText = (EditText) dialog.findViewById(R.id.newHighScoreName);
+                String text = editText.getText().toString();
+                String[] test = getSpecificHighScores(numCols * numRows);
+                String result = (numCols * numRows) + "\n";
+                Boolean scoreAdded = false;
+                for (int i = 0, tot = 0; tot < 3; tot++){
+                    if (!scoreAdded && score > Integer.parseInt(test[i].split(",")[1])){
+                        result += (text + "," + score + "\n");
+                        scoreAdded = true;
+                    }
+                    else {
+                        result += (test[i]+"\n");
+                        i++;
+                    }
+                }
+                plugInNewHighScoresAtLocation((numCols * numRows), result);
+
+                dialog.dismiss();
+
+            }
+        });
+        Button cancelButton = (Button) dialog.findViewById(R.id.cancelButton);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
+    private void plugInNewHighScoresAtLocation(int num, String newScoreSection) {
+        try {
+            FileInputStream is = getActivity().openFileInput("highscore.txt");
+            InputStreamReader isr = new InputStreamReader(is);
+            BufferedReader br = new BufferedReader(isr, 8192);
+            String newHighScoreList = "";
+            while (true){
+                String line = "";
+                try {
+                    line = br.readLine();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if (null == line || line.equals("")){
+                    try {
+                        isr.close();
+                        is.close();
+                        br.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                }
+                if (line.equals(num + "")){
+                    try {
+                        br.readLine();
+                        br.readLine();
+                        br.readLine();
+                        Log.d("Test",newScoreSection);
+                        newHighScoreList += newScoreSection;
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                else {
+                    try {
+                        String newString = line + "\n" + br.readLine() + "\n" + br.readLine() + "\n" + br.readLine() + "\n";
+                        Log.d("Test",newString);
+                        newHighScoreList += (newString);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            FileOutputStream fos = getActivity().openFileOutput("highscore.txt", Context.MODE_PRIVATE);
+            fos.write(newHighScoreList.getBytes());
+            fos.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String[] getSpecificHighScores(int num) {
+        String[] result = new String[3];
+        try {
+            FileInputStream is = getActivity().openFileInput("highscore.txt");
+            InputStreamReader isr = new InputStreamReader(is);
+            BufferedReader br = new BufferedReader(isr, 8192);
+            while (true){
+                String line = "";
+                try {
+                    line = br.readLine();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if (null == line){
+                    try {
+                        isr.close();
+                        is.close();
+                        br.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                }
+                if (line.equals(num + "")){
+                    try {
+                        result[0] = br.readLine();
+                        result[1] = br.readLine();
+                        result[2] = br.readLine();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                else {
+                    try {
+                        br.readLine();
+                        br.readLine();
+                        br.readLine();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            return result;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
         }
 
     }
