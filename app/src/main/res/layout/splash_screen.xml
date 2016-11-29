@@ -27,7 +27,7 @@
             android:id="@+id/text_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="THE CONCENTRATION GAME"
+            android:text="@string/THE_CONCENTRATION_GAME"
             android:textColor="@android:color/black"
             android:textColorHighlight="@android:color/darker_gray"
             android:textSize="28sp"

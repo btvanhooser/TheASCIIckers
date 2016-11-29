@@ -2,6 +2,7 @@
     <string name="app_name">Concentration Game</string>
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
+    <string name="THE_CONCENTRATION_GAME">THE CONCENTRATION GAME</string>
     <color name ="teal">#008080</color>
     <color name="gray">#BFC2C9</color>
     <color name="white">#FFFFFF</color>
