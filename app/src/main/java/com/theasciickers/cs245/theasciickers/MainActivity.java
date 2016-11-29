@@ -12,12 +12,16 @@ import android.support.design.widget.NavigationView;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.content.res.Configuration;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import java.io.File;
+import java.io.FileOutputStream;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,11 +31,61 @@ public class MainActivity extends AppCompatActivity {
     private ActionBarDrawerToggle drawerToggle;
     private static AudioPlayer player;
     private boolean musicOn;
+    String INITIALHIGHSCORELIST = "4\n" +
+            "---,0\n" +
+            "---,0\n" +
+            "---,0\n" +
+            "6\n" +
+            "---,0\n" +
+            "---,0\n" +
+            "---,0\n" +
+            "8\n" +
+            "---,0\n" +
+            "---,0\n" +
+            "---,0\n" +
+            "10\n" +
+            "---,0\n" +
+            "---,0\n" +
+            "---,0\n" +
+            "12\n" +
+            "---,0\n" +
+            "---,0\n" +
+            "---,0\n" +
+            "14\n" +
+            "---,0\n" +
+            "---,0\n" +
+            "---,0\n" +
+            "16\n" +
+            "---,0\n" +
+            "---,0\n" +
+            "---,0\n" +
+            "18\n" +
+            "---,0\n" +
+            "---,0\n" +
+            "---,0\n" +
+            "20\n" +
+            "---,0\n" +
+            "---,0\n" +
+            "---,0";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if (!fileExists(this,"highscore.txt")){
+            try {
+                Log.d("Test","File Created");
+                FileOutputStream fos = openFileOutput("highscore.txt", Context.MODE_PRIVATE);
+                fos.write(INITIALHIGHSCORELIST.getBytes());
+                fos.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        else {
+            Log.d("Test","File Exists");
+        }
 
         // Initialize application state
         if (savedInstanceState == null){
@@ -54,6 +108,14 @@ public class MainActivity extends AppCompatActivity {
 
         navDrawer = (NavigationView) findViewById(R.id.nav_view);
         setupDrawerContent(navDrawer);
+    }
+
+    public boolean fileExists(Context context, String filename) {
+        File file = context.getFileStreamPath(filename);
+        if(file == null || !file.exists()) {
+            return false;
+        }
+        return true;
     }
 
     private ActionBarDrawerToggle setupDrawerToggle(){
