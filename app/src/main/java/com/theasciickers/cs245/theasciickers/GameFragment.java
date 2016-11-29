@@ -33,6 +33,7 @@ public class GameFragment extends android.support.v4.app.Fragment{
     int numCols;
     int clickCount;
     Button [] lastCards = new Button[2];
+    String [] cardStrings = {"'\\0'","null",";-D","//","cout<<","printf()","&nbsp;","t('o't)","NaN","TRUMP"};
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -69,7 +70,7 @@ public class GameFragment extends android.support.v4.app.Fragment{
             }
         });
 
-
+        setRetainInstance(true);
         return view;
     }
 
@@ -112,19 +113,19 @@ public class GameFragment extends android.support.v4.app.Fragment{
                     public void onClick(View v){
                         clickCount++;
                         if(clickCount == 1 ) {
-                            card.setBackground(getResources().getDrawable(R.drawable.concentration_pic));
+                            card.setBackground(getResources().getDrawable(R.drawable.ascii_playing_card_front_blank));
                             lastCards[clickCount-1] = card;
                         }
                         else if (clickCount ==  2){
-                            card.setBackground(getResources().getDrawable(R.drawable.concentration_pic));
+                            card.setBackground(getResources().getDrawable(R.drawable.ascii_playing_card_front_blank));
                             lastCards[clickCount-1] = card;
                             tryAgain.setEnabled(true);
                         }
                     }
                });
                 GridLayout.LayoutParams itemLayoutParams = new GridLayout.LayoutParams(GridLayout.spec(i), GridLayout.spec(j));
-                itemLayoutParams.width = 150;
-                itemLayoutParams.height = 185;
+                itemLayoutParams.width = 120;
+                itemLayoutParams.height = 165;
                 gl.addView(board[i][j],itemLayoutParams);
             }
         }
