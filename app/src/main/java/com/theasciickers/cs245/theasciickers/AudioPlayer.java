@@ -22,15 +22,7 @@ public class AudioPlayer {
     public void stop(){
         if(player != null){
             player.pause(); // used to be release changed to pause to preserve point in song
-            //player = null;
+           // player = null;
         }
-    }
-
-    public int getPosn(){
-       return player.getCurrentPosition();
-    }
-
-    public void seek(int msec){
-        player.seekTo(msec);
     }
 }

@@ -1,16 +1,23 @@
 package com.theasciickers.cs245.theasciickers;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.SharedPreferencesCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.content.res.Configuration;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,26 +33,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Start music
-        player = new AudioPlayer();
-        player.play(this);
-        musicOn = true;
+        // Initialize application state
+        if (savedInstanceState == null){
+            // Start music
+            player = new AudioPlayer();
+            player.play(this);
+            musicOn = true;
 
-        // ---------------------set initial game fragment
-        Class fragmentClass = GameFragment.class;
-        Fragment fragment = null;
-
-        try{
-            fragment = (Fragment) fragmentClass.newInstance();
+            // ---------------------set initial game fragment
+            replaceFrag(GameFragment.class);
         }
-        catch (Exception e){
-            e.printStackTrace();
-        }
-
-        // Replace existing fragment
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.flContent,fragment).commit();
-        //---------------------------------------
 
         // Set toolbar to replace ActionBar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -94,37 +91,39 @@ public class MainActivity extends AppCompatActivity {
     public void selectDrawerItem(MenuItem menuItem){
 
         // Create new fragment and specify the fragment to show based on nav item choosen
-        Fragment fragment = null;
         Class fragmentClass;
 
         switch(menuItem.getItemId()){
             case (R.id.nav_resume_game):
-                fragmentClass = GameFragment.class;
+                replaceFrag(GameFragment.class);
                 setTitle("Concentration Game");
                 break;
             case (R.id.nav_new_game):
-                fragmentClass = GameFragment.class;
+                replaceFrag(GameFragment.class);
                 setTitle("Concentration Game");
                 break;
             case(R.id.nav_end_game):
-                fragmentClass = GameFragment.class;
+                replaceFrag(GameFragment.class);
                 setTitle("Concentration Game");
                 break;
             case(R.id.nav_high_scores):
-                fragmentClass = HighScoresFragment.class;
+                replaceFrag(HighScoresFragment.class);
                 setTitle(menuItem.getTitle());
                 break;
             case(R.id.nav_volume):
-                fragmentClass = GameFragment.class;
                 toggleMusic(menuItem);
-                setTitle("Concentration Game");
-                break;
-            default:
-                fragmentClass = GameFragment.class;
-                setTitle("Concentration Game");
                 break;
         }
 
+        // Highlight the selected item has been done by NavigationView
+        menuItem.setChecked(true);
+
+        // close navigation drawer
+        drawerLayout.closeDrawers();
+    }
+
+    private void replaceFrag(Class fragmentClass){
+        Fragment fragment = null;
         try{
             fragment = (Fragment) fragmentClass.newInstance();
         }
@@ -135,12 +134,6 @@ public class MainActivity extends AppCompatActivity {
         // Replace existing fragment
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.flContent,fragment).commit();
-
-        // Highlight the selected item has been done by NavigationView
-        menuItem.setChecked(true);
-
-        // close navigation drawer
-        drawerLayout.closeDrawers();
     }
 
     @Override
@@ -152,6 +145,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void toggleMusic(MenuItem volumeItem){
+        System.out.println("togglemusic: " + musicOn);
         if(musicOn){
             musicOn = !musicOn;
             player.stop();
@@ -167,17 +161,74 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void saveTextViewState(ViewGroup rootView, Bundle bundle){
+        int numChildren = rootView.getChildCount();
+
+        for(int i = 0; i < numChildren; i++){
+            View v = rootView.getChildAt(i);
+
+            if(v instanceof TextView){
+                TextView text = (TextView)v;
+                if(text.getText() != null){
+                    bundle.putString("textview"+text.getId(),text.getText().toString());
+                }
+            }else if(v instanceof ViewGroup){
+                saveTextViewState((ViewGroup)v,bundle);
+            }
+        }
+    }
+
+    private void loadTextViewState(ViewGroup rootView, Bundle bundle){
+        int numChildren = rootView.getChildCount();
+
+        for (int i = 0; i < numChildren; i++) {
+            View v = rootView.getChildAt(i);
+
+            if (v instanceof TextView){
+                TextView text = (TextView)v;
+                String saved = bundle.getString("textview"+text.getId());
+                text.setText(saved);
+
+            }else if (v instanceof ViewGroup){
+                loadTextViewState((ViewGroup)v, bundle);
+            }
+        }
+    }
+
     @Override
-    protected void onSaveInstanceState(Bundle state){
-        state.putInt("musicPosn", player.getPosn());
-        player.stop();
-        super.onSaveInstanceState(state);
+    protected void onSaveInstanceState(Bundle outState){
+
+        // View related
+        if(getTitle() == "High Scores"){
+            View root = findViewById(R.id.high_scores_root);
+            saveTextViewState((ViewGroup) root,outState);
+        }
+
+        //hamburger related
+        outState.putBoolean("musicOn",musicOn);
+        outState.putString("title",getTitle().toString());
+        super.onSaveInstanceState(outState);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState){
-        int posn = savedInstanceState.getInt("posn");
-        player.seek(posn);
+
+        if(getTitle() == "High Scores") {
+            View root = findViewById(R.id.high_scores_root); //find your root view
+            loadTextViewState((ViewGroup) root, savedInstanceState); //load state
+        }
+        Menu m = navDrawer.getMenu();
+        MenuItem mItem = m.getItem(4);
+        musicOn = savedInstanceState.getBoolean("musicOn");
+        if(musicOn){
+            mItem.setTitle("Music On");
+            mItem.setIcon(R.drawable.ic_volume_up_black_24dp);
+        }else{
+            mItem.setTitle("Music Off");
+            mItem.setIcon(R.drawable.ic_volume_off_black_24dp);
+        }
+
+        setTitle(savedInstanceState.getString("title"));
         super.onRestoreInstanceState(savedInstanceState);
     }
 
