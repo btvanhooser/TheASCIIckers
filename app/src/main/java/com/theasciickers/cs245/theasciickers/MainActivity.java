@@ -1,15 +1,14 @@
 package com.theasciickers.cs245.theasciickers;
 
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.content.res.Configuration;
 
@@ -19,11 +18,18 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private NavigationView navDrawer;
     private ActionBarDrawerToggle drawerToggle;
+    private static AudioPlayer player;
+    private boolean musicOn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Start music
+        player = new AudioPlayer();
+        player.play(this);
+        musicOn = true;
 
         // ---------------------set initial game fragment
         Class fragmentClass = GameFragment.class;
@@ -94,21 +100,28 @@ public class MainActivity extends AppCompatActivity {
         switch(menuItem.getItemId()){
             case (R.id.nav_resume_game):
                 fragmentClass = GameFragment.class;
+                setTitle("Concentration Game");
                 break;
             case (R.id.nav_new_game):
-                fragmentClass = NewGameFragment.class;
+                fragmentClass = GameFragment.class;
+                setTitle("Concentration Game");
                 break;
             case(R.id.nav_end_game):
-                fragmentClass = EndGameFragment.class;
+                fragmentClass = GameFragment.class;
+                setTitle("Concentration Game");
                 break;
             case(R.id.nav_high_scores):
                 fragmentClass = HighScoresFragment.class;
+                setTitle(menuItem.getTitle());
                 break;
             case(R.id.nav_volume):
-                fragmentClass = VolumeFragment.class;
+                fragmentClass = GameFragment.class;
+                toggleMusic(menuItem);
+                setTitle("Concentration Game");
                 break;
             default:
-                fragmentClass = HighScoresFragment.class;
+                fragmentClass = GameFragment.class;
+                setTitle("Concentration Game");
                 break;
         }
 
@@ -125,11 +138,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Highlight the selected item has been done by NavigationView
         menuItem.setChecked(true);
-        // Set action bar title
-        if(menuItem.getItemId() == R.id.nav_resume_game)
-            setTitle("Concentration Game");
-        else
-            setTitle(menuItem.getTitle());
+
         // close navigation drawer
         drawerLayout.closeDrawers();
     }
@@ -140,6 +149,36 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void toggleMusic(MenuItem volumeItem){
+        if(musicOn){
+            musicOn = !musicOn;
+            player.stop();
+            volumeItem.setIcon(R.drawable.ic_volume_off_black_24dp);
+            volumeItem.setTitle("Music Off");
+        }
+        else{
+            player.play(this);
+            musicOn = !musicOn;
+            volumeItem.setTitle("Music On");
+            volumeItem.setIcon(R.drawable.ic_volume_up_black_24dp);
+        }
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle state){
+        state.putInt("musicPosn", player.getPosn());
+        player.stop();
+        super.onSaveInstanceState(state);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState){
+        int posn = savedInstanceState.getInt("posn");
+        player.seek(posn);
+        super.onRestoreInstanceState(savedInstanceState);
     }
 
 }
