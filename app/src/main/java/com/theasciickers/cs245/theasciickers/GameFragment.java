@@ -15,8 +15,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Created by Melanie on 11/28/2016.
@@ -26,19 +30,25 @@ public class GameFragment extends android.support.v4.app.Fragment{
 
     final Integer [] NUM_CARDS = {4,6,8,10,12,14,16,18,20};
     View view;
+    TextView scoreText;
+    int score;
     Button tryAgain;
-    Button [][] board;
+    CardButton [][] board;
+    String [][] boardStrings;
     int numCardsChosen;
     int numRows;
     int numCols;
     int clickCount;
     Button [] lastCards = new Button[2];
     String [] cardStrings = {"'\\0'","null",";-D","//","cout<<","printf()","&nbsp;","t('o't)","NaN","TRUMP"};
+    int pairsRemaining;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-         view = inflater.inflate(R.layout.initial_game_screen,container,false);
+        view = inflater.inflate(R.layout.initial_game_screen,container,false);
 
+        scoreText = (TextView) view.findViewById(R.id.currentGameScore);
+        score = 0;
         ListView list =(ListView) view.findViewById(R.id.listview);
         ArrayAdapter<Integer> adapter = new ArrayAdapter<Integer>(list.getContext(),android.R.layout.simple_list_item_activated_1,NUM_CARDS);
         list.setAdapter(adapter);
@@ -67,6 +77,8 @@ public class GameFragment extends android.support.v4.app.Fragment{
                 tryAgain.setEnabled(false);
                 lastCards[0].setBackground(getResources().getDrawable(R.drawable.ascii_playing_card_back));
                 lastCards[1].setBackground(getResources().getDrawable(R.drawable.ascii_playing_card_back));
+                lastCards[0].setText("");
+                lastCards[1].setText("");
             }
         });
 
@@ -94,32 +106,62 @@ public class GameFragment extends android.support.v4.app.Fragment{
         }
 
         System.out.println("mxn: " + numRows +"x" + numCols);
+        pairsRemaining = ((numRows * numCols) / 2);
     }
 
 
     public void constructBoard(){
         GridLayout gl = (GridLayout) view.findViewById(R.id.gridLayoutTilePicker);
-        board = new Button[numRows][numCols];
-
+        board = new CardButton[numRows][numCols];
+        boardStrings = new String[numRows][numCols];
+        shuffleArray(cardStrings);
+        String[] stringsOnBoard = new String[numCols*numRows];
+        for (int i = 0; i < stringsOnBoard.length; i++){
+            stringsOnBoard[i] = cardStrings[i/2];
+        }
+        shuffleArray(stringsOnBoard);
+        for (int i = 0; i < boardStrings.length; i++){
+            for (int j = 0; j < boardStrings[i].length; j++){
+                boardStrings[i][j] = stringsOnBoard[(i * boardStrings[i].length) + j];
+            }
+        }
 
         gl.setRowCount(numRows);
         gl.setColumnCount(numCols);
         for(int i = 0; i < numRows; i++){
             for(int j = 0; j < numCols; j++){
-                board[i][j] = new Button(getActivity());
+                board[i][j] = new CardButton(getActivity(), i, j);
                 board[i][j].setBackground(getResources().getDrawable(R.drawable.ascii_playing_card_back));
-                final Button card = board[i][j];
+                final CardButton card = board[i][j];
                 card.setOnClickListener(new View.OnClickListener(){
                     public void onClick(View v){
-                        clickCount++;
-                        if(clickCount == 1 ) {
-                            card.setBackground(getResources().getDrawable(R.drawable.ascii_playing_card_front_blank));
-                            lastCards[clickCount-1] = card;
-                        }
-                        else if (clickCount ==  2){
-                            card.setBackground(getResources().getDrawable(R.drawable.ascii_playing_card_front_blank));
-                            lastCards[clickCount-1] = card;
-                            tryAgain.setEnabled(true);
+                        if ((getResources().getDrawable(R.drawable.ascii_playing_card_back).getConstantState()).equals(card.getBackground().getConstantState())) {
+                            clickCount++;
+                            if (clickCount == 1) {
+                                card.setBackground(getResources().getDrawable(R.drawable.ascii_playing_card_front_blank));
+                                card.setText(boardStrings[card.getRow()][card.getCol()]);
+                                lastCards[clickCount - 1] = card;
+                            } else if (clickCount == 2) {
+                                card.setBackground(getResources().getDrawable(R.drawable.ascii_playing_card_front_blank));
+                                card.setText(boardStrings[card.getRow()][card.getCol()]);
+                                lastCards[clickCount - 1] = card;
+                                if ((lastCards[0].getText()).equals(lastCards[1].getText())){
+                                    score += 2;
+                                    scoreText.setText(score + "");
+                                    clickCount = 0;
+                                    pairsRemaining--;
+                                    if (pairsRemaining == 0){
+                                        Log.d("Test","Game ends here");
+                                        //end the game
+                                        //call high score check -- I have this, I just need to add (Brian)
+                                    }
+                                }
+                                else {
+                                    tryAgain.setEnabled(true);
+                                    score = (score == 0) ? 0 : score - 1;
+                                    scoreText.setText(score + "");
+                                }
+                            }
                         }
                     }
                });
@@ -130,6 +172,20 @@ public class GameFragment extends android.support.v4.app.Fragment{
             }
         }
 
+    }
+
+    static void shuffleArray(String[] ar)
+    {
+        // If running on Java 6 or older, use `new Random()` on RHS here
+        Random rnd = new Random();
+        for (int i = ar.length - 1; i > 0; i--)
+        {
+            int index = rnd.nextInt(i + 1);
+            // Simple swap
+            String a = ar[index];
+            ar[index] = ar[i];
+            ar[i] = a;
+        }
     }
 
 }
