@@ -1,5 +1,6 @@
 package com.theasciickers.cs245.theasciickers;
 
+import android.content.Intent;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
@@ -32,7 +33,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        Intent intent = new Intent(this, SplashScreenFragment.class);
+        startActivity(intent);
         // Initialize application state
         if (savedInstanceState == null){
             // Start music

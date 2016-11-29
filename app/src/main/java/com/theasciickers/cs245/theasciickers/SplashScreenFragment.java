@@ -29,15 +29,10 @@ public class SplashScreenFragment extends AppCompatActivity{
         {
             public void run()
             {
-                setContentView(R.layout.activity_main);
+                finish();
             }
         };
         handler.postDelayed(r, 3000);
-    }
-
-    public void onStop(){
-        super.onStop();
-        this.onDestroy();
     }
 
 
