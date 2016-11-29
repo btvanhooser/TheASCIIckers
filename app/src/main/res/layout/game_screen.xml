@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1"
+    android:background="@color/teal">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="449dp"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+        <TextView
+        android:layout_width="108dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/currentGameScoreLabel"
+        tools:fontFamily="sans-serif"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:textColor="@color/white"
+        android:layout_marginLeft="110dp"
+        android:text="Score:"/>
+
+        <TextView
+            android:layout_width="41dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/currentGameScore"
+            tools:fontFamily="sans-serif"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            android:textColor="@color/white"
+            android:text="0"
+            android:layout_weight="0.17" />
+    </LinearLayout>
+
+
+
+    <Button
+        android:layout_width="150dp"
+        android:layout_height="40dp"
+        android:minHeight="112dp"
+        tools:style="@style/Widget.AppCompat.Button.Small"
+        android:layout_weight="0.13"
+        android:layout_marginLeft="100dp"
+        android:id="@+id/tryAgainButton"
+        android:text="Try Again"
+        tools:fontFamily="sans-serif"/>
+</LinearLayout>

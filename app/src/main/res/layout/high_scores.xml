@@ -13,7 +13,10 @@
         android:layout_height="wrap_content"
         android:id="@+id/textView"
         android:layout_weight="0.10"
-        android:text="Number of Tiles" />
+        android:text="Number of Tiles"
+        tools:fontFamily="sans-serif"
+        android:textColor="@color/white"
+        android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Title"/>
 
     <Spinner
         android:layout_width="match_parent"

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">The ASCIIckers</string>
+    <string name="app_name">Concentration Game</string>
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
     <color name ="teal">#008080</color>
@@ -7,4 +7,5 @@
     <color name="white">#FFFFFF</color>
     <color name="darkBlue">#28219D</color>
     <color name="black">#000</color>
+    <array name="spinner_array"></array>
 </resources>
