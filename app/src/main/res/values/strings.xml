@@ -8,4 +8,5 @@
     <color name="darkBlue">#28219D</color>
     <color name="black">#000</color>
     <array name="spinner_array"></array>
+    <string name="THE_CONCENTRATION_GAME">THE CONCENTRATION GAME</string>
 </resources>
