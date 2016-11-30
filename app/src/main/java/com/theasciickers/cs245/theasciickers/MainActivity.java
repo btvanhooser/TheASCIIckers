@@ -162,17 +162,8 @@ public class MainActivity extends AppCompatActivity {
         Class fragmentClass;
 
         switch(menuItem.getItemId()){
-            case (R.id.nav_resume_game):
-                replaceFrag(GameFragment.class);
-                setTitle("Concentration Game");
-                break;
             case (R.id.nav_new_game):
                 replaceFrag(GameFragment.class);
-                setTitle("Concentration Game");
-                break;
-            case(R.id.nav_end_game):
-                //GameFragment gF = (GameFragment) getSupportFragmentManager().findFragmentById(R.id.G);
-                //gF.showAnswers();
                 setTitle("Concentration Game");
                 break;
             case(R.id.nav_high_scores):
