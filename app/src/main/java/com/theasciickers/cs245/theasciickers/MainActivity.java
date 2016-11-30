@@ -73,8 +73,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Intent intent = new Intent(this, SplashScreenFragment.class);
-        startActivity(intent);
+        Intent intent;
+        if(!SplashScreenFragment.checkIfShown()){
+            intent = new Intent(this, SplashScreenFragment.class);
+            startActivity(intent);
+        }
         setContentView(R.layout.activity_main);
         // Initialize application state
         if (!fileExists(this,"highscore.txt")){

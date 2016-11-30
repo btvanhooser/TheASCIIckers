@@ -19,10 +19,14 @@ import android.view.ViewGroup;
  * Created by Alfredo on 11/28/2016.
  */
 
+
 public class SplashScreenFragment extends AppCompatActivity{
+    private static boolean alreadyShown;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        alreadyShown = true;
         setContentView(R.layout.splash_screen);
         final Handler handler = new Handler();
         final Runnable r = new Runnable()
@@ -34,7 +38,9 @@ public class SplashScreenFragment extends AppCompatActivity{
         };
         handler.postDelayed(r, 3000);
     }
-
+    protected static boolean checkIfShown(){
+        return alreadyShown;
+    }
 
 }
 
