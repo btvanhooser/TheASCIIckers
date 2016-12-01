@@ -278,7 +278,7 @@ public class MainActivity extends AppCompatActivity {
             loadTextViewState((ViewGroup) root, savedInstanceState); //load state
         }
         Menu m = navDrawer.getMenu();
-        MenuItem mItem = m.getItem(4);
+        MenuItem mItem = m.getItem(2);
         musicOn = savedInstanceState.getBoolean("musicOn");
         if(musicOn){
             mItem.setTitle("Music On");
