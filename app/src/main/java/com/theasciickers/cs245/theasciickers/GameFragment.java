@@ -439,13 +439,13 @@ public class GameFragment extends android.support.v4.app.Fragment{
             }
         }
         if(card0){
-            board[lastCards[0].getRow()][lastCards[0].getCol()].setBackground(getResources().getDrawable(R.drawable.ascii_playing_card_front_blank));
-            board[lastCards[0].getRow()][lastCards[0].getCol()].setText(lastCards[0].getText());
+            board[lastCards[0].getCol()][lastCards[0].getRow()].setBackground(getResources().getDrawable(R.drawable.ascii_playing_card_front_blank));
+            board[lastCards[0].getCol()][lastCards[0].getRow()].setText(lastCards[0].getText());
             System.out.println("in card 0");
         }
         if(card1){
-            board[lastCards[1].getRow()][lastCards[1].getCol()].setBackground(getResources().getDrawable(R.drawable.ascii_playing_card_front_blank));
-            board[lastCards[1].getRow()][lastCards[1].getCol()].setText(lastCards[1].getText());
+            board[lastCards[1].getCol()][lastCards[1].getRow()].setBackground(getResources().getDrawable(R.drawable.ascii_playing_card_front_blank));
+            board[lastCards[1].getCol()][lastCards[1].getRow()].setText(lastCards[1].getText());
             System.out.println("in card 1");
         }
     }
@@ -530,6 +530,11 @@ public class GameFragment extends android.support.v4.app.Fragment{
                 boardStrings[i] = savedInstanceState.getStringArray("boardStringsR"+i);
                 flipped[i] = savedInstanceState.getBooleanArray("flippedR"+i);
             }
+            boardStrings = transpose(boardStrings);
+            flipped = transpose(flipped);
+            int temp = numRows;
+            numRows = numCols;
+            numCols = temp;
             if(numRows > 0){
                 drawBoard();
                 if(savedInstanceState.getBoolean("card0")){
@@ -546,6 +551,27 @@ public class GameFragment extends android.support.v4.app.Fragment{
             }
 
         }
+    }
+
+    public static boolean[][] transpose(boolean[][] test) {
+        // transpose
+        boolean[][] result = new boolean[test[0].length][test.length];
+        for (int i = 0; i < test[0].length; i++) {
+            for (int j = 0; j < test.length; j++) {
+                result[i][j] = test[j][i];
+            }
+        }
+        return result;
+    }
+    public static String[][] transpose(String[][] test) {
+        // transpose
+        String[][] result = new String[test[0].length][test.length];
+        for (int i = 0; i < test[0].length; i++) {
+            for (int j = 0; j < test.length; j++) {
+                result[i][j] = test[j][i];
+            }
+        }
+        return result;
     }
 
 }
