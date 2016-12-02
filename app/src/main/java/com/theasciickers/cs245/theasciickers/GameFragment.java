@@ -43,6 +43,7 @@ public class GameFragment extends android.support.v4.app.Fragment{
     TextView scoreText;
     int score;
     Button tryAgain;
+    Button endGame;
     CardButton [][] board;
     String [][] boardStrings;
     boolean [][] flipped;
@@ -82,6 +83,7 @@ public class GameFragment extends android.support.v4.app.Fragment{
         });
 
         tryAgain = (Button) view.findViewById(R.id.tryAgainButton);
+        endGame = (Button) view.findViewById(R.id.endGameButton);
         tryAgain.setEnabled(false);
         tryAgain.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,6 +96,12 @@ public class GameFragment extends android.support.v4.app.Fragment{
                 board[lastCards[1].getRow()][lastCards[1].getCol()].setText("");
                 Log.d("Test",lastCards[0].getRow() + " " + lastCards[0].getCol());
                 Log.d("Test",lastCards[1].getRow() + " " + lastCards[1].getCol());
+            }
+        });
+        endGame.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showAnswers();
             }
         });
 
@@ -126,6 +134,7 @@ public class GameFragment extends android.support.v4.app.Fragment{
 
 
     public void constructBoard(){
+        endGame.setEnabled(true);
         GridLayout gl = (GridLayout) view.findViewById(R.id.gridLayoutTilePicker);
         board = new CardButton[numRows][numCols];
         boardStrings = new String[numRows][numCols];
@@ -174,8 +183,8 @@ public class GameFragment extends android.support.v4.app.Fragment{
                                     clickCount = 0;
                                     pairsRemaining--;
                                     if (pairsRemaining == 0){
-                                        Log.d("Test","Game ends here");
-                                        //end the game
+                                        endGame.setEnabled(false);
+                                        tryAgain.setEnabled(false);
                                         askForName();
                                     }
                                 }
@@ -198,42 +207,61 @@ public class GameFragment extends android.support.v4.app.Fragment{
     }
 
     private void askForName() {
-        final Dialog dialog = new Dialog(getActivity());
-        dialog.setContentView(R.layout.high_score_entry);
-        dialog.setTitle("High Score Reached");
-        Button enterButton = (Button) dialog.findViewById(R.id.enterButton);
-        enterButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                EditText editText = (EditText) dialog.findViewById(R.id.newHighScoreName);
-                String text = editText.getText().toString();
-                String[] test = getSpecificHighScores(numCols * numRows);
-                String result = (numCols * numRows) + "\n";
-                Boolean scoreAdded = false;
-                for (int i = 0, tot = 0; tot < 3; tot++){
-                    if (!scoreAdded && score > Integer.parseInt(test[i].split(",")[1])){
-                        result += (text + "," + score + "\n");
-                        scoreAdded = true;
-                    }
-                    else {
-                        result += (test[i]+"\n");
-                        i++;
-                    }
+        String[] test = getSpecificHighScores(numCols * numRows);
+        String[] lastHighScore = test[2].split(",");
+        int lastScore = Integer.parseInt(lastHighScore[1]);
+        if (score < lastScore){
+            //no high score
+            final Dialog dialog = new Dialog(getActivity());
+            dialog.setContentView(R.layout.no_high_score);
+            Button oKButton = (Button) dialog.findViewById(R.id.okayButton);
+            oKButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dialog.dismiss();
                 }
-                plugInNewHighScoresAtLocation((numCols * numRows), result);
+            });
+            TextView scoreView = (TextView) dialog.findViewById(R.id.scoreTextForEndGame);
+            scoreView.setText("Score: " + score);
+            dialog.show();
+        }
+        else {
+            final Dialog dialog = new Dialog(getActivity());
+            dialog.setContentView(R.layout.high_score_entry);
+            dialog.setTitle("High Score Reached");
+            Button enterButton = (Button) dialog.findViewById(R.id.enterButton);
+            enterButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    EditText editText = (EditText) dialog.findViewById(R.id.newHighScoreName);
+                    String text = editText.getText().toString().replace(',', ' ');
+                    String[] test = getSpecificHighScores(numCols * numRows);
+                    String result = (numCols * numRows) + "\n";
+                    Boolean scoreAdded = false;
+                    for (int i = 0, tot = 0; tot < 3; tot++) {
+                        if (!scoreAdded && score > Integer.parseInt(test[i].split(",")[1])) {
+                            result += (text + "," + score + "\n");
+                            scoreAdded = true;
+                        } else {
+                            result += (test[i] + "\n");
+                            i++;
+                        }
+                    }
+                    plugInNewHighScoresAtLocation((numCols * numRows), result);
 
-                dialog.dismiss();
+                    dialog.dismiss();
 
-            }
-        });
-        Button cancelButton = (Button) dialog.findViewById(R.id.cancelButton);
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-            }
-        });
-        dialog.show();
+                }
+            });
+            Button cancelButton = (Button) dialog.findViewById(R.id.cancelButton);
+            cancelButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dialog.dismiss();
+                }
+            });
+            dialog.show();
+        }
     }
 
     private void plugInNewHighScoresAtLocation(int num, String newScoreSection) {
@@ -338,24 +366,19 @@ public class GameFragment extends android.support.v4.app.Fragment{
 
     }
 
-    /*public void showAnswers(){
-        GridLayout gl = (GridLayout) view.findViewById(R.id.gridLayoutTilePicker);
-        gl.removeAllViews();
-        gl.setRowCount(numRows);
-        gl.setColumnCount(numCols);
-        board = new CardButton[numRows][numCols];
+    public void showAnswers(){
         for(int i = 0; i < numRows; i++){
             for(int j = 0; j < numCols; j++){
-                board[i][j] = new CardButton(getActivity(), i, j);
                 board[i][j].setBackground(getResources().getDrawable(R.drawable.ascii_playing_card_front_blank));
                 board[i][j].setText(boardStrings[i][j]);
-                GridLayout.LayoutParams itemLayoutParams = new GridLayout.LayoutParams(GridLayout.spec(i), GridLayout.spec(j));
-                itemLayoutParams.width = 120;
-                itemLayoutParams.height = 165;
-                gl.addView(board[i][j],itemLayoutParams);
+                flipped[i][j] = true;
             }
         }
-    }*/
+        clickCount = 2;
+        pairsRemaining = 0;
+        tryAgain.setEnabled(false);
+        endGame.setEnabled(false);
+    }
 
     public void drawBoard(){
         GridLayout gl = (GridLayout) view.findViewById(R.id.gridLayoutTilePicker);
@@ -388,14 +411,16 @@ public class GameFragment extends android.support.v4.app.Fragment{
                                 card.setText(boardStrings[card.getRow()][card.getCol()]);
                                 lastCards[clickCount - 1] = card;
                                 if ((lastCards[0].getText()).equals(lastCards[1].getText())){
+                                    flipped[lastCards[0].getRow()][lastCards[0].getCol()] = true;
+                                    flipped[lastCards[1].getRow()][lastCards[1].getCol()] = true;
                                     score += 2;
                                     scoreText.setText(score + "");
                                     clickCount = 0;
                                     pairsRemaining--;
                                     if (pairsRemaining == 0){
-                                        Log.d("Test","Game ends here");
-                                        //end the game
-                                        //call high score check -- I have this, I just need to add (Brian)
+                                        endGame.setEnabled(false);
+                                        tryAgain.setEnabled(false);
+                                        askForName();
                                     }
                                 }
                                 else {
@@ -427,7 +452,6 @@ public class GameFragment extends android.support.v4.app.Fragment{
 
     static void shuffleArray(String[] ar)
     {
-        // If running on Java 6 or older, use `new Random()` on RHS here
         Random rnd = new Random();
         for (int i = ar.length - 1; i > 0; i--)
         {
@@ -452,6 +476,7 @@ public class GameFragment extends android.support.v4.app.Fragment{
             outState.putInt("clickCount",clickCount);
             outState.putInt("pairsRemaining",pairsRemaining);
             outState.putBoolean("tryAgainIsEnabled",tryAgain.isEnabled());
+            outState.putBoolean("endGameIsEnabled",endGame.isEnabled());
             card0 = false;
             card1 = false;
             if(lastCards[0] != null){
@@ -496,6 +521,7 @@ public class GameFragment extends android.support.v4.app.Fragment{
             numCols = savedInstanceState.getInt("numCols");
             numCardsChosen = savedInstanceState.getInt("numCardsChosen");
             tryAgain.setEnabled(savedInstanceState.getBoolean("tryAgainIsEnabled"));
+            endGame.setEnabled(savedInstanceState.getBoolean("endGameIsEnabled"));
             clickCount = savedInstanceState.getInt("clickCount");
             System.out.println("clickcount: " +clickCount);
             System.out.println("numCardsChosen: " + numCardsChosen);

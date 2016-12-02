@@ -14,7 +14,7 @@
         android:weightSum="1">
 
         <TextView
-        android:layout_width="match_parent"
+        android:layout_width="108dp"
         android:layout_height="wrap_content"
         android:id="@+id/currentGameScoreLabel"
         tools:fontFamily="sans-serif"
@@ -72,12 +72,30 @@
 
     </GridLayout>
 
-    <Button
-        android:layout_width="158dp"
-        android:layout_height="wrap_content"
-        tools:style="@style/Widget.AppCompat.Button.Small"
-        android:id="@+id/tryAgainButton"
-        tools:fontFamily="sans-serif"
-        android:text="Try Again"
-        android:layout_gravity="center" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:layout_width="158dp"
+            android:layout_height="wrap_content"
+            tools:style="@style/Widget.AppCompat.Button.Small"
+            android:id="@+id/tryAgainButton"
+            tools:fontFamily="sans-serif"
+            android:text="Try Again"
+            android:layout_gravity="left"
+            android:layout_weight="1"
+            android:enabled="false" />
+
+        <Button
+            android:layout_width="158dp"
+            android:layout_height="wrap_content"
+            tools:style="@style/Widget.AppCompat.Button.Small"
+            android:id="@+id/endGameButton"
+            tools:fontFamily="sans-serif"
+            android:text="End Game"
+            android:layout_gravity="right"
+            android:layout_weight="1"
+            android:enabled="false" />
+    </LinearLayout>
+
 </LinearLayout>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+android:orientation="vertical"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:weightSum="1"
+android:background="#008080">
+<TextView
+    android:layout_width="186dp"
+    android:layout_height="wrap_content"
+    android:scaleType="center"
+    android:text="Game Over"
+    android:textSize="24sp"
+    tools:textColor="@android:color/white" />
+
+<TextView
+    android:layout_width="186dp"
+    android:layout_height="wrap_content"
+    android:id="@+id/scoreTextForEndGame"
+    android:textSize="18sp"
+    android:scaleType="center"
+    tools:textColor="@android:color/white"/>
+
+<Button
+    android:id="@+id/okayButton"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="OK" />
+</LinearLayout>
