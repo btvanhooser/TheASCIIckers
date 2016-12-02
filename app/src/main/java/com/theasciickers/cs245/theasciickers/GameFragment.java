@@ -538,12 +538,12 @@ public class GameFragment extends android.support.v4.app.Fragment{
             if(numRows > 0){
                 drawBoard();
                 if(savedInstanceState.getBoolean("card0")){
-                    lastCards[0] = board[savedInstanceState.getInt("lastCard0Row")][savedInstanceState.getInt("lastCard0Col")];
+                    lastCards[0] = board[savedInstanceState.getInt("lastCard0Col")][savedInstanceState.getInt("lastCard0Row")];
                     lastCards[0].setText(savedInstanceState.getString("lastCard0"));
                     card0 = true;
                 }
                 if(savedInstanceState.getBoolean("card1")){
-                    lastCards[1] = board[savedInstanceState.getInt("lastCard1Row")][savedInstanceState.getInt("lastCard1Col")];
+                    lastCards[1] = board[savedInstanceState.getInt("lastCard1Col")][savedInstanceState.getInt("lastCard1Row")];
                     lastCards[1].setText(savedInstanceState.getString("lastCard1"));
                     card1 = true;
                 }
